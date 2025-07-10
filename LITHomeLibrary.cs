@@ -35,9 +35,13 @@ namespace LITHomeLibrary
     public class LightsChannelV1
     {
         // In each class method, choose appropriate EventHandler depending on how you want the LightEventArgs to behave toward its input argument
-        public event EventHandler BooleanEvent;
-        public event EventHandler IntegerEvent;
-        public event EventHandler StringEvent;
+        // public event EventHandler BooleanEvent;
+        // public event EventHandler IntegerEvent;
+        // public event EventHandler StringEvent;
+        public event EventHandler<LightEventArgs> BooleanEvent;
+
+        public event EventHandler<LightEventArgs> IntegerEvent;
+        public event EventHandler<LightEventArgs> StringEvent;
 
         public void TogglePressed(ushort Is_On_value)
         {
@@ -84,7 +88,10 @@ namespace LITHomeLibrary
         public void Channel_Level_Set(ushort value)
         {
             CrestronConsole.PrintLine("LightsChannelV1.Channel_Level_Set {0}", value);
-            // TODO:  Add logic here
+            if (IntegerEvent != null)
+            {
+                IntegerEvent(this, new LightEventArgs(value));
+            }
         }
 
 

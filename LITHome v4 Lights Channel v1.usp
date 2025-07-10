@@ -172,6 +172,6 @@ EVENT
 FUNCTION Main()
 {
     RegisterEvent(LightsChannelV1_Obj,BooleanEvent,Is_On_EventHandler);
-	// RegisterEvent(LightsChannelV1_Obj,IntegerEvent,IntegerEventHandler);
+	RegisterEvent(LightsChannelV1_Obj,IntegerEvent,Channel_Level_fb_EventHandler);
 	// RegisterEvent(LightsChannelV1_Obj,StringEvent,StringEventHandler);
 }
