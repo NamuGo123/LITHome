@@ -17,27 +17,68 @@ using Crestron.SimplSharp;
 
 namespace LITHomeLibrary
 {
-    public class LightEventArgs : EventArgs // used for methods inside event handlers
+    public class LightEventArgs : EventArgs
     {
+        // public bool BoolData = false;  // try implementing after preliminary test is successful
         public int IntData = 0;
         public string StringData = "";
 
+        // public Action ActionData;
+
         public LightEventArgs() { } //must exist for SIMPL+ compliance
+        // public LightEventArgs(bool data) { BoolData = data; }
         public LightEventArgs(int data) { IntData = data; }
         public LightEventArgs(string data) { StringData = data; }
+        // public LightEventArgs(Action data) { ActionData = data; }
     }
 
     public class LightsChannelV1
     {
-        
-        // public Action Is_On;
-        // public Action Is_Off;
-        // public Action<ushort> Channel_Level_fb;
+        // In each class method, choose appropriate EventHandler depending on how you want the LightEventArgs to behave toward its input argument
+        public event EventHandler BooleanEvent;
+        public event EventHandler IntegerEvent;
+        public event EventHandler StringEvent;
 
-        public void TogglePressed()
+        public void TogglePressed(ushort Is_On_value)
         {
             CrestronConsole.PrintLine("LightsChannelV1.TogglePressed");
-            // TODO:  Add logic here
+            try
+            {
+                if (Is_On_value == 0)
+                {
+                    if (BooleanEvent != null)
+                    {
+                        BooleanEvent(this, new LightEventArgs(1));
+                    }
+                }
+                else
+                {
+                    if (BooleanEvent != null)
+                    {
+                        BooleanEvent(this, new LightEventArgs(0));
+                    }
+                }
+            }
+            /* 
+            the try statement above could be simplified into:
+
+            try
+            {
+                if (Is_On_value == 0)
+                {
+                    BooleanEvent?.Invoke(this, new LightEventArgs(1));
+                }
+                else
+                {
+                    BooleanEvent?.Invoke(this, new LightEventArgs(0));
+                }
+            }
+
+            */
+            catch (Exception ex)
+            {
+                ErrorLog.Error("TogglePressed Error: {0}", ex.Message);
+            }
         }
 
         public void Channel_Level_Set(ushort value)
@@ -52,3 +93,27 @@ namespace LITHomeLibrary
         public LightsChannelV1() { }
     }
 }
+
+
+
+/*
+Cathy's code example:
+
+public void OnSetOffPressed(ushort value)
+  {
+      try
+      {
+          if (value == 1)
+          {
+              _currentChannelLevel = 0;
+              if (Is_Off != null) Is_Off();
+          }
+      }
+      catch (Exception ex)
+      {
+          ErrorLog.Error("OnSetOffPressed Error: {0}", ex.Message);
+      }
+  }
+
+
+*/
